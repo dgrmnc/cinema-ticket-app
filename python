@@ -28,7 +28,7 @@ def sleep(seconds):
 
 for index,movie_info in enumerate(movies_info,start=1):
     print(f"{index}.movie is : {movie_info['name']} -->> price is:{movie_info['price']}$")
-print("---------------------")
+print("-" * 20)
 
 # movie selection loop
 while True:
