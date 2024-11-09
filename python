@@ -1,0 +1,220 @@
+import re
+import time
+
+seats = ['1A', '2B', '3C', '4D', '5E', '6F', '7G', '8H', '9I', '10J', '11K', '12L', '13M', '14N', '15O', '16P', '17Q', '18R', '19S', '20T']
+
+movies_info = [
+    {"name": "Iron Man 3", "price": 10, "hours": ("09:00", "11:00", "13:00", "14:15", "15:00")},
+    {"name": "Hypnotize", "price": 15, "hours": ("10:30", "11:30", "12:30", "13:45", "15:50", "16:20")},
+    {"name": "Batman The Dark Knight", "price": 10, "hours": ("09:00", "11:00", "13:00", "14:15", "15:00")},
+    {"name": "Batman The Dark Knight Rises", "price": 15, "hours": ("10:30", "11:30", "12:30", "13:45", "15:50", "16:20")},
+    {"name": "Batman Begins", "price": 10, "hours": ("09:00", "11:00", "13:00", "14:15", "15:00")},
+    {"name": "Conjuring 2", "price": 15, "hours": ("10:30", "11:30", "12:30", "13:45", "15:50", "16:20")},
+    {"name": "Kutsal Damacana", "price": 10, "hours": ("09:00", "11:00", "13:00", "14:15", "15:00")},
+    {"name": "Kutsal Damacana 2", "price": 15, "hours": ("10:30", "11:30", "12:30", "13:45", "15:50", "16:20")},
+    {"name": "Kolpaçino", "price": 10, "hours": ("09:00", "11:00", "13:00", "14:15", "15:00")},
+    {"name": "Kolpaçino 2", "price": 15, "hours": ("10:30", "11:30", "12:30", "13:45", "15:50", "16:20")}
+]
+
+
+print("*** WELCOME ***")
+print(" ")
+print("Available movie(s) are: ")
+print()
+
+# sleep mode
+def sleep(seconds):
+    time.sleep(seconds)
+
+for index,movie_info in enumerate(movies_info,start=1):
+    print(f"{index}.movie is : {movie_info['name']} -->> price is:{movie_info['price']}$")
+print("---------------------")
+
+# movie selection loop
+while True:
+        select = input("Please select a movie: (q to quit): ").lower().capitalize()
+
+        if select == 'Q':
+            print("Exiting the app...")
+            sleep(2)
+            exit()
+        # check if the input contains all digit number
+        if  select.isdigit():
+            print("Wrong pick! Please enter a right movie name..")
+            continue
+        # to check whether film is in the list or not
+        selected_movie = next((movie for movie in movies_info if movie['name'].lower() == select.lower()),None)
+        if selected_movie:
+            print(f"Selected movie(s): {selected_movie['name']} for {selected_movie['price']}$")
+            break
+        #ask_user = input("Would you like to buy a ticket for another movie?( y/n ): ").lower()
+        #if ask_user == 'y':
+        #    selectize()
+        #else:
+        #    print(f"Continuing with {selected_movie['name']}..")
+        else:
+            print(f"{select} is not present at now. Please try a different film from the present list.")
+        continue
+
+
+# movie hour selection loop
+while True:
+    print("Available session for this movie: ")
+    sleep(0.50)
+    # display the available hours
+    for hours in selected_movie['hours']:
+        print(hours)
+
+    hour_selecter = input("Which session would you like to go?(q to quit): ").lower()
+
+    if hour_selecter == 'q':
+        print("Exiting the app..")
+        sleep((2))
+        exit()
+
+    conf_for_hour = [':',';','.','-',' ']
+    pattern_for_hour = f"[{''.join(map(re.escape,conf_for_hour))}]"
+    selected_hour = hour_selecter.strip().replace(":", "")
+    #selected_hour = "".join(re.split(pattern_for_hour,hour_selecter)).zfill(4)
+
+    formatted_hours = ["".join(hours.split(":")).zfill(4) for hours in selected_movie['hours']]
+
+    if selected_hour in formatted_hours:
+        print(f"Session has been selected for {selected_movie['name']} at {hour_selecter} is confirmed!")
+        break
+    else:
+        print(f"We do not have a session for selected hour {hour_selecter}, please try to choose another session for the {selected_movie['name']}")
+
+
+# ticket purchases loop
+person_count = 0
+while True:
+    person = input("How many tickets you want to buy?(q to quit): ").lower()
+    print("Printing..")
+    sleep(2)
+    if person == 'q':
+        print("Exiting the app..")
+        sleep(2)
+        exit()
+    if person.isalpha():
+        print("Value must be number!, try again...")
+        continue
+    
+    # save ticket number as int
+    person_count = int(person)
+
+    print("Available seats for this movie:  ")
+    sleep(2)
+
+    # to show the all available seats
+    for available_seat in seats:
+        print(available_seat)
+        sleep(0.09)
+
+    while True:
+        # seat number selecter
+        selected_seat = input(f"You bought {person} ticket(s) Please select your seat(s) number(q to quit): ").upper()
+
+        if selected_seat.lower() =='q':
+            print("Exiting the app...")
+            sleep(2)
+            exit()
+
+        conf = [',','-',':',';','.',' ']
+        pattern = f"[{''.join(map(re.escape, conf))}]"
+        selected_seat_list = re.split(pattern,selected_seat)
+        selected_seat_list = [seat.strip() for seat in selected_seat_list if seat.strip()]
+
+        if len(selected_seat_list) != person_count:
+            print(f"{selected_seat} is not present, please select a "
+                f"valid seat from the list")
+            print(f"You need to select exactly {person} seat(s) for your {person} ticket(s). Please try again.")
+            continue
+
+        invalid_seats = [seat for seat in selected_seat_list if seat not in seats]
+        if invalid_seats:
+            print(f"Invalid seat(s): {', '.join(invalid_seats)}. Please choose from the available seats.")
+            continue
+            
+        total_price = selected_movie['price'] * person_count
+        print("\nPRINTING TICKET(S)\n")
+        sleep(0.75)
+        print("***** TICKET(S) *****\n")
+        print(f"{selected_movie['name']} at {hour_selecter} and seat number(s): {', '.join(selected_seat_list)}")
+        print(f"Total amount: {total_price}")
+        print("\n***** TICKET(S)*****\n")
+
+       
+        break
+    break
+
+
+# SQLite db functions
+
+import sqlite3
+
+def connect_db():
+    connection = sqlite3.connect('cinema_tickets.db')
+    return connection
+
+# create a table
+
+def create_table():
+    connection = connect_db()
+    cursor = connection.cursor()
+    # creating actual table below:
+    cursor.execute(""" create table if not exists tickets_info(
+                   id integer primary key autoincrement,
+                   movie_name text not null,
+                   seat_number text not null,
+                   show_time text,
+                   ticket_price real,
+                   purchase_time timestamp default current_timestamp)""")
+    
+
+    connection.commit()
+    connection.close()
+
+
+def insert_ticket_to_table(movie_name, seat_number, show_time, ticket_price):
+    
+    connection = connect_db()
+    cursor = connection.cursor()
+    try:
+        # checking whether the seats taken or not
+        cursor.execute("SELECT * FROM tickets_info where seat_number = ?",(seat_number,))
+        existing_ticket = cursor.fetchone()
+
+        if existing_ticket:
+            print(f"Error: Seat {seat_number} is already taken!")
+        else:
+            # adding a new ticket to db
+            cursor.execute("insert into tickets_info (movie_name, seat_number, show_time, ticket_price) values(?, ?, ?, ?)", 
+                        (movie_name, seat_number, show_time, ticket_price))
+            
+            connection.commit()
+            print(f"Ticket for {selected_movie} with seat {seat_number} added successfully!")
+
+    except sqlite3.Error as e:
+            print(f"SQLite error: {e}")
+    finally:
+        connection.close()
+
+total_price = selected_movie['price'] * person_count
+for seat in selected_seat_list:
+    insert_ticket_to_table(selected_movie['name'], seat, hour_selecter, selected_movie['price'])
+
+
+def get_tickets():
+    connection = connect_db()
+    cursor = connection.cursor()
+    # get the tickets from db and writing them up
+    cursor.execute("select * from tickets_info")
+    rows = cursor.fetchall()
+    if rows:
+        for row in rows:
+            print(f"Ticket ID: {row[0]}, Movie: {row[1]}, Seat: {row[2]}, Time: {row[3]}, Price: {row[4]}")
+    else:
+        print("No tickets available.")
+
+    connection.close()
